@@ -6,7 +6,6 @@ import ExistingRooms from './components/room/ExistingRooms';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/home/Home';
 import EditRoom from './components/room/EditRoom';
-import Navbar from './components/navbar/Navbar';
 import RoomListing from './components/room/RoomListing';
 import Admin from './components/admin/Admin';
 

@@ -37,3 +37,4 @@ const RoomCard = ({ room }) => {
         </col>
     )
 }
+export default RoomCard

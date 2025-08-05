@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 
-const HeaderMain = () => {
+const MainHeader = () => {
     return(
         <header className="header-banner">
             <div className="overlay"></div>
@@ -14,3 +14,4 @@ const HeaderMain = () => {
         </header>
     )
 }
+export default MainHeader
