@@ -1,59 +1,76 @@
-import React from "react";
-import addRoom from "../utils/Apifunction";
-import { useState } from "react";
-const AddRoom = () => {
-    const [newRoom, setNewRoom] = useState({
-        photo: null,
-        roomType: "",
-        roomPrice: "",
-    });
+import React,{useState,useEffect} from 'react';
+import{getRoomById ,updateRoom} from "../utils/Apifunction";
+import { useParams, Link } from 'react-router-dom';
+import RoomTypeSelector from './RoomTypeSelector';
+import { useNavigate } from 'react-router-dom';
 
-    const [imagePreview, setImagePreview] = useState("");
 
-    const [successMessage, setSuccessMessage] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
+const EditRoom = () => {
+       const [Room, setRoom] = useState({
+            photo: null,
+            roomType: "",
+            roomPrice: "",
+        });
+    
+        const [imagePreview, setImagePreview] = useState("");
+    
+        const [successMessage, setSuccessMessage] = useState("");
+        const [errorMessage, setErrorMessage] = useState("");
 
-    const handleRoomInputChange = (e) => {
-        const name = e.target.name;
-        let value = e.target.value;
-        if (name === "roomPrice") {
-            if (!isNaN(value)) {
-                value.ParseInt(value);
-            } else {
-                value = "";
-            }
-        }
-        setNewRoom({ ...newRoom, [name]: value });
-    }
+const { roomTd } = useParams();
 
-    const handleImageChange = (e) => {
+ const handleImageChange = (e) => {
         const selectedImage = e.target.files[0];
-        setNewRoom({ ...newRoom, photo: selectedImage });
+        setRoom({ ...Room, photo: selectedImage });
         setImagePreview(URL.createObjectURL(selectedImage));
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+const handleInputChange = (event) => {
+    const{name,value}= event.target;
+    setRoom({...Room,[name]:value});
+}
+
+
+useEffect(() => {
+    const fetchRoom = async () => {
         try {
-            const success = await addroom(newRoom.photo, newRoom.roomType, newRoom.roomPrice);
-            if (success !== undefined) {
-                setSuccessMessage("A new room has been added successfully.");
-                setNewRoom({
-                    photo: null,
-                    roomType: "",
-                    roomPrice: "",
-                });
-                setImagePreview("");
-                setErrorMessage("");
-            } else {
-                setErrorMessage("Failed to add the room. Please try again.");
-            }
+            const roomData = await getRoomById(roomTd);
+            setRoom(roomData);
+            setImagePreview(roomData.photo);
         } catch (error) {
-            setErrorMessage(error.mesaage);
+            console.error(error);
         }
-        return (
-            <>
-                <section classname="container, mt-5 mb-5">
+    };
+    fetchRoom();
+}, [roomTd]);
+
+
+
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const success = await updateRoom(Room.roomId, Room);
+        if (success.stauts === 200) {
+            setSuccessMessage("Room updated successfully.");
+            const updatedRoomData = await getRoomById(Room.roomId);
+            setRoom(updatedRoomData);
+            setImagePreview(updatedRoomData.photo);
+            setErrorMessage("");
+           
+        } else {
+            setErrorMessage("Failed to update the room. Please try again.");
+        }
+    } catch (error) {
+        console.error(error);
+        setErrorMessage(error.message);
+    }
+}
+
+  return (
+    <>
+                <div classname="container, mt-5 mb-5">
+                    <h3 classname="text-center mb-5 mt-5">Edit Room</h3>
                     <div classname="row justify-content-center">
                         <div classname="col-md-8 col-lg-6">
                             <h2 classname="mt-5 mb-2">Add a New Room</h2>
@@ -118,10 +135,13 @@ const AddRoom = () => {
                                     )}
                                 </div>
 
-                                <div classname="d-grid d-md-flex mt-2">
-                                    <button classname="btn btn-outline-primary ml-5">
-                                        Save Room
-                                    </button>
+                                <div classname="d-grid gap-2 d-md-flex mt-2">
+                                  <link to={"/existing-rooms"}className ="btn btn-outline-info ml-5">
+                                  back
+                                  </link>
+                                  <button type="submit" className="btn btn-outline-warning">
+                                    Edit Room
+                                  </button>
 
                                 </div>
 
@@ -129,12 +149,11 @@ const AddRoom = () => {
                         </div>
                     </div>
 
-                </section>
+                </div>
 
 
             </>
-        )
-
-    }
+  )
 }
-    export default Addroom
+
+export default EditRoom

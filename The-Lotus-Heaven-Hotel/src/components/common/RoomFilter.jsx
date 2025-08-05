@@ -21,11 +21,11 @@ const RoomFilter = ({ data, setFilteredData }) => {
             <span className="input-group-text" id="room-type-filter">
                 Filter rooms by type
             </span>
-            <select className="form-select" value={filter} onChange={handleSelectChange}>
+            <select className="form-select" aria-label="room type filter" value={filter} onChange={handleSelectChange}>
                 <option value="">Select a room type Filter...</option>
                 {roomTypes.map((type, index) => (
                     <option key={index} value={String(type)}>
-                        {type}
+                        {String(type)}
                     </option>
                 ))}
             </select>
